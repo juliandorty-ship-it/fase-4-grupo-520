@@ -1,0 +1,51 @@
+2026-11-05 19:09:55,233 | INFO | Inicio de la simulación de Software FJ
+2026-11-05 19:09:55,233 | INFO | Inicio de la operación 1: Registrar cliente válido
+2026-11-05 19:09:55,233 | INFO | Operación 1 exitosa
+2026-11-05 19:09:55,234 | INFO | Fin de la operación 1
+2026-11-05 19:09:55,234 | INFO | Inicio de la operación 2: Registrar cliente con correo inválido
+2026-11-05 19:09:55,234 | ERROR | Operación 2 fallida | ClienteInvalidoError: Correo electrónico inválido: 'luis#correo'
+2026-11-05 19:09:55,234 | INFO | Fin de la operación 2
+2026-11-05 19:09:55,234 | INFO | Inicio de la operación 3: Registrar cliente con teléfono inválido
+2026-11-05 19:09:55,234 | ERROR | Operación 3 fallida | ClienteInvalidoError: El teléfono solo debe contener números
+2026-11-05 19:09:55,234 | ERROR | Causa original: ValueError: invalid literal for int() with base 10: 'abc123'
+2026-11-05 19:09:55,235 | INFO | Fin de la operación 3
+2026-11-05 19:09:55,235 | INFO | Inicio de la operación 4: Registrar cliente sin nombre
+2026-11-05 19:09:55,235 | ERROR | Operación 4 fallida | ParametroFaltanteError: El nombre es obligatorio
+2026-11-05 19:09:55,235 | INFO | Fin de la operación 4
+2026-11-05 19:09:55,235 | INFO | Inicio de la operación 5: Crear servicio: reserva de sala
+2026-11-05 19:09:55,235 | INFO | Operación 5 exitosa
+2026-11-05 19:09:55,235 | INFO | Fin de la operación 5
+2026-11-05 19:09:55,236 | INFO | Inicio de la operación 6: Crear servicio: alquiler de equipo
+2026-11-05 19:09:55,236 | INFO | Operación 6 exitosa
+2026-11-05 19:09:55,236 | INFO | Fin de la operación 6
+2026-11-05 19:09:55,236 | INFO | Inicio de la operación 7: Crear servicio: asesoría especializada
+2026-11-05 19:09:55,236 | INFO | Operación 7 exitosa
+2026-11-05 19:09:55,236 | INFO | Fin de la operación 7
+2026-11-05 19:09:55,236 | INFO | Inicio de la operación 8: Crear servicio con tarifa inválida
+2026-11-05 19:09:55,237 | ERROR | Operación 8 fallida | ServicioInvalidoError: La tarifa por hora debe ser mayor a 0
+2026-11-05 19:09:55,237 | INFO | Fin de la operación 8
+2026-11-05 19:09:55,237 | INFO | Inicio de la operación 9: Crear asesoría con nivel inválido
+2026-11-05 19:09:55,237 | ERROR | Operación 9 fallida | ServicioInvalidoError: El nivel debe ser 'junior' o 'senior'
+2026-11-05 19:09:55,237 | INFO | Fin de la operación 9
+2026-11-05 19:09:55,238 | INFO | Inicio de la operación 10: Reserva exitosa
+2026-11-05 19:09:55,238 | INFO | Reserva R001 confirmada. Costo total: 178500.0
+2026-11-05 19:09:55,238 | INFO | Procesamiento de la reserva R001 finalizado (estado: confirmada)
+2026-11-05 19:09:55,238 | INFO | Operación 10 exitosa
+2026-11-05 19:09:55,238 | INFO | Fin de la operación 10
+2026-11-05 19:09:55,238 | INFO | Inicio de la operación 11: Reserva con duración inválida
+2026-11-05 19:09:55,238 | ERROR | Operación 11 fallida | ReservaInvalidaError: Duración inválida para la reserva
+2026-11-05 19:09:55,239 | ERROR | Causa original: ServicioInvalidoError: La reserva de sala permite entre 1 y 8 horas
+2026-11-05 19:09:55,239 | INFO | Fin de la operación 11
+2026-11-05 19:09:55,239 | INFO | Inicio de la operación 12: Reserva con servicio no disponible
+2026-11-05 19:09:55,239 | ERROR | Operación 12 fallida | ServicioNoDisponibleError: El servicio 'Proyector' no está disponible
+2026-11-05 19:09:55,239 | INFO | Fin de la operación 12
+2026-11-05 19:09:55,239 | INFO | Inicio de la operación 13: Cancelar una reserva dos veces
+2026-11-05 19:09:55,240 | ERROR | Operación 13 fallida | OperacionNoPermitidaError: La reserva ya está cancelada
+2026-11-05 19:09:55,240 | INFO | Fin de la operación 13
+2026-11-05 19:09:55,240 | INFO | Inicio de la operación 14: Cálculo de costos con sobrecarga
+2026-11-05 19:09:55,240 | INFO | Operación 14 exitosa
+2026-11-05 19:09:55,240 | INFO | Fin de la operación 14
+2026-11-05 19:09:55,241 | INFO | Inicio de la operación 15: Cálculo inconsistente
+2026-11-05 19:09:55,241 | ERROR | Operación 15 fallida | CalculoInconsistenteError: El descuento debe estar entre 0 y 1
+2026-11-05 19:09:55,241 | INFO | Fin de la operación 15
+2026-11-05 19:09:55,242 | INFO | Fin de la simulación de Software FJ
