@@ -1,6 +1,6 @@
 """Reserva de Software FJ: une cliente, servicio, duración y estado."""
 
-from entidades import Cliente, EntidadBase
+from cliente import Cliente, EntidadBase
 from excepciones import (
     CalculoInconsistenteError,
     OperacionNoPermitidaError,
@@ -8,7 +8,7 @@ from excepciones import (
     SoftwareFJError,
 )
 from logger import registrar_error, registrar_evento
-from servicios import IVA, AlquilerEquipo, ReservaSala, Servicio
+from servicio import IVA, AlquilerEquipo, ReservaSala, Servicio
 
 
 class Reserva(EntidadBase):
@@ -111,16 +111,19 @@ class Reserva(EntidadBase):
             f"Estado: {self._estado}"
         )
 
+    def mostrar_reserva(self):
+        """Muestra en pantalla los datos de la reserva."""
+        print(self.describir())
 
 # Prueba rápida: solo se ejecuta si corres este archivo directamente
 if __name__ == "__main__":
-    cliente = Cliente("C001", "Ana Pérez", "ana@correo.com", "3001234567")
+    cliente = Cliente("Ana Pérez", "1020304050", "ana@correo.com")
     sala = ReservaSala("S001", "Sala Ejecutiva", 50000, 10)
     equipo = AlquilerEquipo("E001", "Proyector", 20000, 2)
 
     # Caso 1: reserva exitosa
     reserva1 = Reserva("R001", cliente, sala, 3)
-    print(reserva1.describir())
+    reserva1.mostrar_reserva()
     print(f"Procesada: {reserva1.procesar()}")
     print(reserva1.describir())
     print(f"Costo con IVA: {reserva1.calcular_costo()}")
