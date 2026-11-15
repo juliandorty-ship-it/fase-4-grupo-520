@@ -1,10 +1,10 @@
 """Programa principal de Software FJ: simula 15 operaciones del sistema."""
 
-from entidades import Cliente
+from cliente import Cliente
 from excepciones import ReservaInvalidaError, SoftwareFJError
-from logger import registrar_error, registrar_evento
+from logger_config import registrar_error, registrar_evento
 from reserva import Reserva
-from servicios import AlquilerEquipo, AsesoriaEspecializada, ReservaSala
+from servicio import AlquilerEquipo, AsesoriaEspecializada, ReservaSala
 
 # Listas internas: reemplazan la base de datos
 clientes = []
@@ -41,25 +41,25 @@ def ejecutar_operacion(numero, descripcion, accion):
 
 # ---------- Clientes ----------
 def op_cliente_valido():
-    cliente = Cliente("C001", "Ana Pérez", "ana@correo.com", "3001234567")
+    cliente = Cliente("Ana Pérez", "1020304050", "ana@correo.com")
     clientes.append(cliente)
     return cliente.describir()
 
 
 def op_cliente_correo_invalido():
-    cliente = Cliente("C002", "Luis Gómez", "luis#correo", "3109876543")
+    cliente = Cliente("Luis Gómez", "1098765432", "luis#correo")
     clientes.append(cliente)
     return cliente.describir()
 
 
-def op_cliente_telefono_invalido():
-    cliente = Cliente("C003", "Marta Ruiz", "marta@correo.com", "abc123")
+def op_cliente_documento_invalido():
+    cliente = Cliente("Marta Ruiz", "abc123", "marta@correo.com")
     clientes.append(cliente)
     return cliente.describir()
 
 
 def op_cliente_sin_nombre():
-    cliente = Cliente("C004", "", "pedro@correo.com", "3001112233")
+    cliente = Cliente("", "1020304050", "pedro@correo.com")
     clientes.append(cliente)
     return cliente.describir()
 
@@ -154,7 +154,7 @@ def main():
     operaciones = [
         (1, "Registrar cliente válido", op_cliente_valido),
         (2, "Registrar cliente con correo inválido", op_cliente_correo_invalido),
-        (3, "Registrar cliente con teléfono inválido", op_cliente_telefono_invalido),
+        (3, "Registrar cliente con documento inválido", op_cliente_documento_invalido),
         (4, "Registrar cliente sin nombre", op_cliente_sin_nombre),
         (5, "Crear servicio: reserva de sala", op_crear_sala),
         (6, "Crear servicio: alquiler de equipo", op_crear_equipo),
