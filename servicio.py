@@ -10,7 +10,7 @@ from excepciones import (
     ServicioNoDisponibleError,
     SoftwareFJError,
 )
-from logger import registrar_error, registrar_evento
+from logger_config import registrar_error, registrar_evento
 
 # Impuesto por defecto (IVA 19 %)
 IVA = 0.19

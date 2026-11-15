@@ -7,7 +7,7 @@ from excepciones import (
     ReservaInvalidaError,
     SoftwareFJError,
 )
-from logger import registrar_error, registrar_evento
+from logger_config import registrar_error, registrar_evento
 from servicio import IVA, AlquilerEquipo, ReservaSala, Servicio
 
 
@@ -114,6 +114,7 @@ class Reserva(EntidadBase):
     def mostrar_reserva(self):
         """Muestra en pantalla los datos de la reserva."""
         print(self.describir())
+
 
 # Prueba rápida: solo se ejecuta si corres este archivo directamente
 if __name__ == "__main__":
