@@ -1,6 +1,5 @@
 """Excepciones personalizadas del sistema Software FJ."""
 
-
 class SoftwareFJError(Exception):
     """Excepción base: todas las demás excepciones del sistema heredan de ella."""
 
