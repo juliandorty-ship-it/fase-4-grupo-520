@@ -47,3 +47,4 @@ if __name__ == "__main__":
     except SoftwareFJError as e:
         # Captura con la clase base y muestra el mensaje
         print(f"Error capturado: {e.mensaje}")
+        
