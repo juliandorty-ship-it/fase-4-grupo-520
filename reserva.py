@@ -61,13 +61,20 @@ class Reserva(EntidadBase):
             raise OperacionNoPermitidaError("La reserva ya está confirmada")
         # Lanza ServicioNoDisponibleError si el servicio no está disponible
         self._servicio.verificar_disponibilidad()
+        # Calcula antes de cambiar el estado: si falla, queda pendiente.
+        costo = self.calcular_costo()
+        self._servicio.disponible = False
         self._estado = "confirmada"
+        registrar_evento(f"Reserva {self.identificador} confirmada. Costo total: {costo}")
 
     def cancelar(self):
         """Cancela la reserva si la operación está permitida."""
         if self._estado == "cancelada":
             raise OperacionNoPermitidaError("La reserva ya está cancelada")
+        if self._estado == "confirmada":
+            self._servicio.disponible = True
         self._estado = "cancelada"
+        registrar_evento(f"Reserva {self.identificador} cancelada")
 
     def calcular_costo(self, impuesto=IVA, descuento=0.0):
         """Costo de la reserva. Sobrecarga con impuesto y descuento opcionales."""
@@ -90,11 +97,6 @@ class Reserva(EntidadBase):
             registrar_error(f"Reserva {self.identificador} fallida", e)
             return False
         else:
-            # Solo se ejecuta si no hubo error
-            costo = self.calcular_costo()
-            registrar_evento(
-                f"Reserva {self.identificador} confirmada. Costo total: {costo}"
-            )
             return True
         finally:
             # Se ejecuta siempre, haya o no error

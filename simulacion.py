@@ -1,10 +1,10 @@
 """Simulación de Software FJ: ejecuta 10 simulaciones (5 válidas y 5 no válidas)."""
 
-from entidades import Cliente  # Clase Cliente con validaciones
+from cliente import Cliente  # Clase Cliente con validaciones
 from excepciones import ReservaInvalidaError, SoftwareFJError  # Excepción base y de reserva
-from logger import RUTA_LOGS, registrar_error, registrar_evento  # Funciones del archivo de logs
+from logger_config import RUTA_LOGS, registrar_error, registrar_evento  # Funciones del archivo de logs
 from reserva import Reserva  # Clase Reserva (confirmar, cancelar, procesar)
-from servicios import AlquilerEquipo, AsesoriaEspecializada, ReservaSala  # Los tres servicios
+from servicio import AlquilerEquipo, AsesoriaEspecializada, ReservaSala  # Los tres servicios
 
 # Listas internas: reemplazan la base de datos (no se usa ningún motor de datos)
 clientes = []  # Aquí se guardan los clientes registrados
@@ -74,8 +74,8 @@ def ejecutar_simulacion(numero, tipo, descripcion, accion):
 # ====================== SIMULACIONES VÁLIDAS ======================
 def sim_registrar_cliente():
     """Válida 1: registra un cliente con datos correctos."""
-    # Crea el cliente (se ejecutan las validaciones de nombre, correo y teléfono)
-    cliente = Cliente("C101", "Carlos Ramírez", "carlos.ramirez@correo.com", "3112345678")
+    # Crea el cliente (se ejecutan las validaciones de nombre, correo y documento)
+    cliente = Cliente("Carlos Ramírez", "1020304050", "carlos.ramirez@correo.com")
     # Lo guarda en la lista interna de clientes
     clientes.append(cliente)
     # Registra el evento en el log
@@ -150,10 +150,10 @@ def sim_cancelar_reserva():
 
 
 # ====================== SIMULACIONES NO VÁLIDAS ======================
-def sim_cliente_telefono_invalido():
-    """No válida 1: el teléfono tiene letras (excepción encadenada)."""
-    # El teléfono no es numérico, por lo que Cliente lanza ClienteInvalidoError
-    cliente = Cliente("C102", "Laura Gómez", "laura@correo.com", "31x45y")
+def sim_cliente_documento_invalido():
+    """No válida 1: el documento tiene letras (excepción encadenada)."""
+    # El documento no es numérico, por lo que Cliente lanza ClienteInvalidoError
+    cliente = Cliente("Laura Gómez", "31x45y", "laura@correo.com")
     # Estas líneas no se alcanzan porque la línea anterior lanza el error
     clientes.append(cliente)
     return cliente.describir()
@@ -213,7 +213,7 @@ def ejecutar_simulaciones():
         (3, VALIDA, "Crear y procesar una reserva", sim_reserva_exitosa),
         (4, VALIDA, "Calcular costos (polimorfismo y sobrecarga)", sim_calculo_de_costos),
         (5, VALIDA, "Cancelar una reserva confirmada", sim_cancelar_reserva),
-        (6, NO_VALIDA, "Registrar cliente con teléfono inválido", sim_cliente_telefono_invalido),
+        (6, NO_VALIDA, "Registrar cliente con documento inválido", sim_cliente_documento_invalido),
         (7, NO_VALIDA, "Crear servicio con tarifa inválida", sim_servicio_tarifa_invalida),
         (8, NO_VALIDA, "Reserva con duración inválida", sim_reserva_duracion_invalida),
         (9, NO_VALIDA, "Reserva de un servicio no disponible", sim_servicio_no_disponible),
