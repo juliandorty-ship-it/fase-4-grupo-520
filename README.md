@@ -28,9 +28,9 @@ Tutor: Jorge Eduardo Ospina
 | Archivo | Contenido |
 |---|---|
 | `excepciones.py` | Excepción base `SoftwareFJError` y sus excepciones personalizadas |
-| `logger.py` | Configuración del logger y funciones `registrar_evento()` y `registrar_error()` |
-| `entidades.py` | Clase abstracta `EntidadBase` y clase `Cliente` |
-| `servicios.py` | Clase abstracta `Servicio` y los servicios `ReservaSala`, `AlquilerEquipo` y `AsesoriaEspecializada` |
+| `logger_config.py` | Configuración del logger y funciones `registrar_evento()` y `registrar_error()` |
+| `cliente.py` | Clase abstracta `EntidadBase` y clase `Cliente` |
+| `servicio.py` | Clase abstracta `Servicio` y los servicios `ReservaSala`, `AlquilerEquipo` y `AsesoriaEspecializada` |
 | `reserva.py` | Clase `Reserva` (confirmar, cancelar y procesar) |
 | `simulacion.py` | 10 simulaciones: 5 válidas y 5 no válidas |
 | `main.py` | Programa principal: simula 15 operaciones del sistema |
@@ -49,7 +49,7 @@ python simulacion.py
 ```
 
 Cada módulo también incluye una prueba rápida que se ejecuta solo al correr ese archivo
-directamente, por ejemplo `python servicios.py` o `python reserva.py`.
+directamente, por ejemplo `python servicio.py` o `python reserva.py`.
 
 Al terminar, revisa el archivo `logs.txt`: allí queda cada evento y cada error con su fecha,
 su nivel (`INFO` o `ERROR`) y su mensaje.
@@ -70,11 +70,11 @@ EntidadBase (abstracta)
 
 - **`EntidadBase`** (abstracta): guarda el identificador y obliga a las clases hijas a
   implementar `describir()`.
-- **`Cliente`**: guarda nombre, correo y teléfono como atributos privados, con propiedades
+- **`Cliente`**: guarda nombre, documento y correo como atributos privados, con propiedades
   (`@property`) y validaciones:
   - Nombre: solo letras y espacios, mínimo 3 caracteres.
   - Correo: formato `texto@texto.texto`.
-  - Teléfono: solo dígitos, entre 7 y 10.
+  - Documento: solo dígitos, entre 5 y 12.
 - **`Servicio`** (abstracta): define los métodos abstractos `validar_parametros()` y
   `calcular_costo()`, y el método `calcular_costo_total()` con impuesto y descuento opcionales.
 - **`ReservaSala`**: de 1 a 8 horas. Tiene capacidad de personas.
@@ -90,7 +90,8 @@ costo_total = costo_base × (1 − descuento) × (1 + impuesto)
 ```
 
 El impuesto por defecto es el IVA (19 %) y el descuento por defecto es 0. El descuento debe
-estar entre 0 y 1, y el impuesto no puede ser negativo.
+ser mayor o igual a 0 y menor que 1, y el impuesto no puede ser negativo.
+Se rechazan NaN, infinitos y valores booleanos en los cálculos.
 
 ## Principios de programación orientada a objetos
 
@@ -124,14 +125,13 @@ Todas heredan de `SoftwareFJError`:
 - **`try/except/else/finally`**: en `Reserva.procesar()`, `ejecutar_operacion()` de `main.py` y
   `ejecutar_simulacion()` de `simulacion.py`.
 - **Encadenamiento de excepciones (`raise ... from e`)**: conserva la causa original del error.
-  Se usa, por ejemplo, cuando el teléfono tiene letras, cuando la tarifa no es un número y
+  Se usa, por ejemplo, cuando el documento tiene letras, cuando la tarifa no es un número y
   cuando la duración de una reserva es inválida.
-- **Captura de errores inesperados** con `except Exception`, para que el programa no se
-  detenga nunca.
+- **Captura de errores inesperados** con `except Exception`, para que las operaciones puedan continuar ante errores capturados.
 
 ## Archivo de logs
 
-`logger.py` crea el archivo `logs.txt` en la carpeta del proyecto. Cada línea tiene el
+`logger_config.py` crea el archivo `logs.txt` en la carpeta del proyecto. Cada línea tiene el
 formato:
 
 ```
@@ -151,7 +151,7 @@ Si una excepción fue encadenada, el log guarda también la **causa original**.
 | 3 | Válida | Crear y procesar una reserva |
 | 4 | Válida | Calcular costos (polimorfismo y sobrecarga) |
 | 5 | Válida | Cancelar una reserva confirmada |
-| 6 | No válida | Cliente con teléfono con letras |
+| 6 | No válida | Cliente con documento con letras |
 | 7 | No válida | Servicio con tarifa que no es un número |
 | 8 | No válida | Reserva con duración fuera de rango |
 | 9 | No válida | Reserva de un servicio no disponible |
@@ -159,10 +159,36 @@ Si una excepción fue encadenada, el log guarda también la **causa original**.
 
 Al final se muestra cuántas simulaciones tuvieron el resultado esperado.
 
-**`main.py`** simula 15 operaciones adicionales (clientes, servicios, reservas y cálculos,
+**`main.py`** simula 15 operaciones (clientes, servicios, reservas y cálculos,
 válidos e inválidos) y muestra un resumen final.
 
 ## Información académica
 
 Universidad Nacional Abierta y a Distancia (UNAD). Escuela de Ciencias Básicas, Tecnología e
 Ingeniería (ECBTI). Curso: Programación (código 213023). Noviembre de 2026.
+
+
+## Disponibilidad y validaciones reforzadas
+
+Cada servicio permite una sola reserva confirmada a la vez. Al confirmar se
+valida el costo y se bloquea el servicio; al cancelar la reserva confirmada se
+libera. Cancelar una reserva pendiente no libera un servicio ocupado por otra
+reserva. No se manejan calendarios ni franjas horarias; los equipos se ofrecen
+como un lote completo.
+
+Las tarifas, horas, impuestos y descuentos deben ser números finitos en sus
+rangos permitidos. Se rechazan NaN, infinitos y booleanos. Un cálculo inválido
+no confirma la reserva ni cambia la disponibilidad.
+
+## Pruebas de regresión
+
+Desde la carpeta del proyecto:
+
+```bash
+python -m unittest -v test_validaciones
+```
+
+Se comprueba la exclusión de reservas, la liberación al cancelar, la recuperación
+ante errores de costo, las entradas numéricas inválidas y la ejecución de ambas
+simulaciones (10 y 15 operaciones). Los datos permanecen solo durante la sesión;
+logs.txt conserva eventos, pero no permite restaurar clientes ni reservas.

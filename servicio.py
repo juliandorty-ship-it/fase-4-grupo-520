@@ -1,5 +1,6 @@
 """Servicios de Software FJ: clase abstracta Servicio y tres servicios especializados."""
 
+from math import isfinite
 from abc import abstractmethod  # Para declarar métodos abstractos
 
 from cliente import EntidadBase
@@ -28,12 +29,14 @@ class Servicio(EntidadBase):
         self._nombre = str(nombre).strip()
         try:
             # Convierte la tarifa a número decimal
+            if isinstance(tarifa_hora, bool):
+                raise ValueError("Una tarifa no puede ser booleana")
             tarifa = float(tarifa_hora)
-        except (TypeError, ValueError) as e:
+        except (TypeError, ValueError, OverflowError) as e:
             # Encadenamiento: conserva el error original como causa
             raise ServicioInvalidoError("La tarifa por hora debe ser un número") from e
         # La tarifa debe ser positiva
-        if tarifa <= 0:
+        if not isfinite(tarifa) or tarifa <= 0:
             raise ServicioInvalidoError("La tarifa por hora debe ser mayor a 0")
         self._tarifa_hora = tarifa
         # Todo servicio nuevo está disponible
@@ -69,10 +72,12 @@ class Servicio(EntidadBase):
     def _validar_horas(horas, minimo, maximo, etiqueta):
         """Convierte las horas a número y comprueba que estén en el rango."""
         try:
+            if isinstance(horas, bool):
+                raise ValueError("Las horas no pueden ser booleanas")
             horas = float(horas)
-        except (TypeError, ValueError) as e:
+        except (TypeError, ValueError, OverflowError) as e:
             raise ServicioInvalidoError("Las horas deben ser un número") from e
-        if not minimo <= horas <= maximo:
+        if not isfinite(horas) or not minimo <= horas <= maximo:
             raise ServicioInvalidoError(
                 f"{etiqueta} permite entre {minimo} y {maximo} horas"
             )
@@ -88,18 +93,27 @@ class Servicio(EntidadBase):
 
     def calcular_costo_total(self, horas, impuesto=IVA, descuento=0.0):
         """Costo final. Sobrecarga con parámetros opcionales: impuesto y descuento."""
-        # Los parámetros opcionales también se validan
-        if not 0 <= descuento < 1:
-            raise CalculoInconsistenteError("El descuento debe estar entre 0 y 1")
-        if impuesto < 0:
-            raise CalculoInconsistenteError("El impuesto no puede ser negativo")
+        # Rechaza tipos incorrectos, booleanos, NaN e infinito.
+        try:
+            if isinstance(descuento, bool) or isinstance(impuesto, bool):
+                raise ValueError("Los porcentajes no pueden ser booleanos")
+            descuento, impuesto = float(descuento), float(impuesto)
+        except (TypeError, ValueError, OverflowError) as e:
+            raise CalculoInconsistenteError("Impuesto y descuento deben ser números") from e
+        if not isfinite(descuento) or not 0 <= descuento < 1:
+            raise CalculoInconsistenteError("El descuento debe ser mayor o igual a 0 y menor que 1")
+        if not isfinite(impuesto) or impuesto < 0:
+            raise CalculoInconsistenteError("El impuesto debe ser finito y no negativo")
         # Costo base calculado por la clase hija (polimorfismo)
         costo = self.calcular_costo(horas)
         total = costo * (1 - descuento) * (1 + impuesto)
         # Un total menor o igual a cero es un cálculo inconsistente
-        if total <= 0:
+        if not isfinite(total) or total <= 0:
             raise CalculoInconsistenteError("El costo total calculado es inválido")
-        return round(total, 2)
+        total = round(total, 2)
+        if total <= 0:
+            raise CalculoInconsistenteError("El total redondeado debe ser mayor a cero")
+        return total
 
 
 class ReservaSala(Servicio):
@@ -108,7 +122,7 @@ class ReservaSala(Servicio):
     def __init__(self, identificador, nombre, tarifa_hora, capacidad):
         super().__init__(identificador, nombre, tarifa_hora)
         # La capacidad debe ser un entero mayor a 0
-        if not isinstance(capacidad, int) or capacidad <= 0:
+        if isinstance(capacidad, bool) or not isinstance(capacidad, int) or capacidad <= 0:
             raise ServicioInvalidoError("La capacidad debe ser un entero mayor a 0")
         self._capacidad = capacidad
 
@@ -137,7 +151,7 @@ class AlquilerEquipo(Servicio):
     def __init__(self, identificador, nombre, tarifa_hora, cantidad):
         super().__init__(identificador, nombre, tarifa_hora)
         # La cantidad de equipos debe ser un entero mayor a 0
-        if not isinstance(cantidad, int) or cantidad <= 0:
+        if isinstance(cantidad, bool) or not isinstance(cantidad, int) or cantidad <= 0:
             raise ServicioInvalidoError("La cantidad debe ser un entero mayor a 0")
         self._cantidad = cantidad
 
